@@ -43,7 +43,7 @@ class FileDataSourceHandler(DataSourceHandlerInterface):
 
     def _do_parse_file(self):
         with open(self._file_path, 'r', newline=self._line_delimiter) as file:
-            line: str = file.readline().strip();
+            line: str = file.readline().strip()
             while line:
                 values = line.split(self._value_delimiter)
                 if len(values) > 1:  # хз че с ключом без значения делать
@@ -66,11 +66,9 @@ class FileDataSourceHandler(DataSourceHandlerInterface):
         self._map = dict()
         self._cpp_parser = TempParser()
 
-    def get_info(self) -> Dict[str, Dict[str, str]]:
+    def get_info(self) -> Dict[str, Dict[str, Dict[str, bool]]]:
         self._do_parse_file()
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(self._map)
-        return ...
+        return self._map
 
 
 # Класс который получает данные из бд
@@ -111,7 +109,8 @@ class HttpDataSourceHandler(DataSourceHandlerInterface):
 
 def main() -> int:
     data_source_handler: DataSourceHandlerInterface = FileDataSourceHandler('test_data_source.txt', ',', '\r\n')
-    data_source_handler.get_info()
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(data_source_handler.get_info())
     return 0
 
 
