@@ -1,7 +1,25 @@
+import pprint
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List
-from collections import defaultdict
 
+
+class TempParser:
+    counter = 0
+
+    def __init__(self):
+        pass
+
+    def parse_bytes(self, bytes_str: str) -> (str, Dict[str, bool]): # Я хз пока че он возвращать буедт ес честно
+        # Разбиваем строку на пары символов (байты)
+        byte_pairs = [bytes_str[i:i + 2] for i in range(0, len(bytes_str), 2)]
+
+        # Создаем словарь, где ключи - индексы байтов, значения - True/False в зависимости от четности байта
+        result = {f'field_{i}'.strip(): int(byte, 16) % 2 == 0 for i, byte in enumerate(byte_pairs)}
+        self.counter += 1
+        return f'struct_{self.counter}'.strip(), result
+
+    def reset_counter(self):
+        self.counter = 0
 
 
 class DataSourceHandlerInterface(metaclass=ABCMeta):
@@ -14,71 +32,44 @@ class DataSourceHandlerInterface(metaclass=ABCMeta):
 class FileDataSourceHandler(DataSourceHandlerInterface):
     _file_path: str
     _value_delimiter: str
-    _line_delimiter: str
+    _line_delimiter: str  # now only None, '', '\n', '\r', и '\r\n'
 
-    _cpp_parser: ...
+    _cpp_parser: TempParser
 
     # test
-    _map: Dict[str, List[str]]
+    _map: Dict[str, Dict[str, Dict[str, bool]]]
+
     # test
-
-    def _get_line(self) -> str:
-        with open(self._file_path, 'r') as file:
-            buffer = ''
-            while True:
-                char = file.read(1)  # Чтение одного символа
-                if not char:  # Конец файла
-                    if buffer:
-                        yield buffer  # Возвращаем оставшийся буфер, если он не пуст
-                    break
-                if char == self._line_delimiter:
-                    yield buffer
-                    buffer = ''
-                else:
-                    buffer += char
-
-    def _parse_line(self, line: str) -> str:
-        buffer = ''
-        for char in line:
-            if char == self._value_delimiter:
-                yield buffer
-                buffer = ''
-            else:
-                buffer += char
-
-        # Вернуть оставшийся буфер, если он не пуст
-        if buffer:
-            yield buffer
 
     def _do_parse_file(self):
-        key: str
-        values: List[str] = []
-        is_key = True
-
-        line_generator = self._get_line();
-        for line in line_generator:
-            value_generator = self._parse_line(line)
-            for value in value_generator:
-                if is_key:
-                    key = value
-                    is_key = False;
-                else:
-                    values.append(value)
-            self._map[key] = values.copy();
-            is_key = True
-            values.clear()
-
+        with open(self._file_path, 'r', newline=self._line_delimiter) as file:
+            line: str = file.readline().strip();
+            while line:
+                values = line.split(self._value_delimiter)
+                if len(values) > 1:  # хз че с ключом без значения делать
+                    key = values.pop(0).strip()  # Оставшиеся элементы как значения
+                    # TODO: Вызов парсера со стороны плюсов \.
+                    structs: Dict[str, Dict[str, bool]] = dict()
+                    for value in values:
+                        struct_key, struct = self._cpp_parser.parse_bytes(value)
+                        structs[struct_key] = struct
+                    self._cpp_parser.reset_counter()
+                    self._map[key] = structs
+                    # TODO: Вызов парсера со стороны плюсов /.
+                line: str = file.readline().strip()
 
     def __init__(self, file_path: str, _value_delimiter: str, _line_delimiter: str):
         self._file_path = file_path
         self._value_delimiter = _value_delimiter
         self._line_delimiter = _line_delimiter
 
-        self._map = {}
+        self._map = dict()
+        self._cpp_parser = TempParser()
 
     def get_info(self) -> Dict[str, Dict[str, str]]:
         self._do_parse_file()
-        print(self._map)
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(self._map)
         return ...
 
 
@@ -117,8 +108,9 @@ class HttpDataSourceHandler(DataSourceHandlerInterface):
         # TODO
         return ...
 
+
 def main() -> int:
-    data_source_handler: DataSourceHandlerInterface = FileDataSourceHandler('test_data_source.txt', ',', '\n')
+    data_source_handler: DataSourceHandlerInterface = FileDataSourceHandler('test_data_source.txt', ',', '\r\n')
     data_source_handler.get_info()
     return 0
 

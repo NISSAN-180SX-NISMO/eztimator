@@ -23,11 +23,11 @@ def generate_data(num_entries, predefined_values=None):
     data = []
 
     for key in keys:
-        num_values = random.randint(1, 4)
+        num_values = random.randint(1, 3)
         if predefined_values:
             values = generate_predefined_values(predefined_values, num_values)
         else:
-            values = [generate_random_hex(random.randint(6, 10)) for _ in range(num_values)]
+            values = [generate_random_hex(random.randint(2, 4)) for _ in range(num_values)]
         entry = f"{key},{','.join(values)}"
         data.append(entry)
 
