@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(zparser-lib)
+project(zparser)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -10,5 +10,6 @@ set(pybind11_DIR C:/Users/user/AppData/Local/Programs/Python/Python39/Lib/site-p
 find_package(pybind11 REQUIRED PATHS ${pybind11_DIR})
 
 # Добавляем вашу библиотеку
-add_library(zparser-lib MODULE python_interface.cpp)
-target_link_libraries(zparser-lib PRIVATE pybind11::module)
+add_library(zparser MODULE python_interface.cpp
+        src/zparser.cpp)
+target_link_libraries(zparser PRIVATE pybind11::module)
