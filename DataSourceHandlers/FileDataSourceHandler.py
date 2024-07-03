@@ -1,6 +1,6 @@
 from typing import Dict
 from DataSourceHandlers.DataSourceHandlerInterface import DataSourceHandlerInterface
-from zparser.TempParser import TempParser
+from zparser_lib_cpp.TempParser import TempParser
 
 
 class FileDataSourceHandler(DataSourceHandlerInterface):

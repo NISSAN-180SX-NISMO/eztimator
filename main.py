@@ -1,12 +1,17 @@
 import pprint
+import sys
 from DataSourceHandlers.FileDataSourceHandler import FileDataSourceHandler
 from DataSourceHandlers.DataSourceHandlerInterface import DataSourceHandlerInterface
 
+import zparser
+
 
 def main() -> int:
-    data_source_handler: DataSourceHandlerInterface = FileDataSourceHandler('test_data_source.txt', ',', '\r\n')
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(data_source_handler.get_info())
+
+    print(zparser.hello_from_cpp())
+
+    z = zparser.zparser()
+    print(z.hello_from_zparser())
     return 0
 
 
