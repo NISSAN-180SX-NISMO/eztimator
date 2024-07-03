@@ -1,9 +1,18 @@
+# idk:
 *.xls
 *.xml
 *.iml
+*.drawio*
+
+# cpp dll for python:
+*.pyd
+
+# build:
 build
-venv
-.idea
 zparser_lib_cpp/build
-zparser_lib_cpp/venv
 zparser_lib_cpp/cmake-build-debug
+
+# govno:
+*venv
+*.idea
+*__pycache__
