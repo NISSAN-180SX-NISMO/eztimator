@@ -1,0 +1,9 @@
+*.xls
+*.xml
+*.iml
+build
+venv
+.idea
+zparser_lib_cpp/build
+zparser_lib_cpp/venv
+zparser_lib_cpp/cmake-build-debug
