@@ -5,10 +5,24 @@ from DataSourceHandlers.DataSourceHandlerInterface import DataSourceHandlerInter
 import time
 import keyboard
 
-import zparser
+from comparator.FieldsComparator import compare_fields
+source = {
+    'field_0': True,
+    'field_1': False,
+    'field_2': True
+    # 'field_3': True,
+    # 'field_4': False
+}
+
+target = {
+    'field_0': False,
+    'field_1': False,
+    'field_2': True
+    # 'field_3': True,
+    # 'field_4': False
+}
 
 Parser = zparser.zparser()
-
 
 def on_d_pressed():
     print("Button 'd' pressed")
@@ -45,6 +59,18 @@ def main() -> int:
     z = zparser.zparser()
     print(z.hello_from_zparser())
     Parser.init()
+
+    print(compare_fields(source, target))
+
+    # Исходные наборы битов
+    a = 0b010  # 2 в десятичной системе
+    b = 0b110  # 6 в десятичной системе
+
+    # Применение операции XOR
+    xor_result = a ^ b
+
+    # Вывод результата в двоичном виде
+    print(f'{xor_result:03b}')
     do_something()
     return 0
 

@@ -2,6 +2,8 @@
 *.xls
 *.xml
 *.iml
+*.drawio*
+
 
 # cpp dll for python:
 *.pyd
