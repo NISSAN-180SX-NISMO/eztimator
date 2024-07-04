@@ -1,45 +1,36 @@
-from typing import Dict
-from DataSourceHandlers.DataSourceHandlerInterface import DataSourceHandlerInterface
+from __future__ import annotations
+
+from typing import Dict, List, Tuple, Generator, Iterator
+from DataSourceHandlers.AbstractDataSourceHandler import AbstractDataSourceHandler
 from zparser_lib_cpp.TempParser import TempParser
 
 
-class FileDataSourceHandler(DataSourceHandlerInterface):
+class FileDataSourceHandler(AbstractDataSourceHandler):
     _file_path: str
     _value_delimiter: str
-    _line_delimiter: str  # now only None, '', '\n', '\r', и '\r\n'
+    _line_delimiter: str  # now only None, '', '\n', '\r' и '\r\n'
 
-    _cpp_parser: TempParser
-
-    # test
-    _map: Dict[str, Dict[str, Dict[str, bool]]]
-
-    # test
-
-    def _do_parse_file(self):
+    def get_split_line_iterator(self) -> Iterator[Tuple[str, List[str]]]:
         with open(self._file_path, 'r', newline=self._line_delimiter) as file:
             line: str = file.readline().strip()
             while line:
-                values = line.split(self._value_delimiter)
+                values: List[str] = line.split(self._value_delimiter)
                 if len(values) > 1:  # хз че с ключом без значения делать
                     key = values.pop(0).strip()  # Оставшиеся элементы как значения
-                    # TODO: Вызов парсера со стороны плюсов \.
-                    structs: Dict[str, Dict[str, bool]] = dict()
-                    for value in values:
-                        struct_key, struct = self._cpp_parser.parse_bytes(value)
-                        structs[struct_key] = struct
-                    self._cpp_parser.reset_counter()
-                    self._map[key] = structs
-                    # TODO: Вызов парсера со стороны плюсов /.
+                    yield key, values
                 line: str = file.readline().strip()
 
     def __init__(self, file_path: str, _value_delimiter: str, _line_delimiter: str):
+        super().__init__()
         self._file_path = file_path
         self._value_delimiter = _value_delimiter
         self._line_delimiter = _line_delimiter
-
-        self._map = dict()
         self._cpp_parser = TempParser()
 
-    def get_info(self) -> Dict[str, Dict[str, Dict[str, bool]]]:
-        self._do_parse_file()
-        return self._map
+    def get_info(self, key: str) -> Dict[str, str] | None:
+        return self._source_data.get(key)
+
+    def read_source_data(self):
+        split_line_iter = self.get_split_line_iterator()
+        for key, values in split_line_iter:
+            self._source_data[key] = values

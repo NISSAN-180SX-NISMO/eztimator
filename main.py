@@ -1,77 +1,61 @@
-import pprint
-import sys
-from DataSourceHandlers.FileDataSourceHandler import FileDataSourceHandler
-from DataSourceHandlers.DataSourceHandlerInterface import DataSourceHandlerInterface
-import time
-import keyboard
-
-from comparator.FieldsComparator import compare_fields
-source = {
-    'field_0': True,
-    'field_1': False,
-    'field_2': True
-    # 'field_3': True,
-    # 'field_4': False
-}
-
-target = {
-    'field_0': False,
-    'field_1': False,
-    'field_2': True
-    # 'field_3': True,
-    # 'field_4': False
-}
-
-Parser = zparser.zparser()
-
-def on_d_pressed():
-    print("Button 'd' pressed")
-    Parser.do_work(5)
+from typing import Iterator, Tuple, List, Dict
 
 
+def get_split_line_iterator(file_path: str, line_delimiter: str, value_delimiter: str) \
+        -> Iterator[Tuple[str, List[str]]]:
+    with open(file_path, 'r', newline=line_delimiter) as file:
+        line: str = file.readline().strip()
+        while line:
+            values: List[str] = line.split(value_delimiter)
+            if len(values) > 1:  # хз че с ключом без значения делать
+                key = values.pop(0).strip()  # Оставшиеся элементы как значения
+                yield key, values
+            line: str = file.readline().strip()
 
 
-def do_something():
-    try:
-        while True:
-            start_time = time.time()
+def get_parsed_source_data(file_path: str, line_delimiter: str, value_delimiter: str) \
+        -> Dict[str, List[str]]:
+    source_data: Dict[str, List[str]] = dict()
+    for key, values in get_split_line_iterator(file_path, line_delimiter, value_delimiter):
+        source_data[key] = values
+    return source_data
 
-            # Выполнение функции do_something
-            work_status = "done" if Parser.checkWorkIsDone() == zparser.WORK_STATUS.DONE else "not done"
-            work_result = Parser.getWorkResult()
 
-            print(f"work status: {work_status}; work result: {work_result}")
+db: ... = ...           # TODO
+http: ... = ...         # TODO
+http_config: ... = ...  # TODO
 
-            # Проверка нажатия клавиши "d"
-            if keyboard.is_pressed('d'):
-                on_d_pressed()
 
-            # Задержка до следующей итерации (раз в секунду)
-            elapsed_time = time.time() - start_time
-            time.sleep(max(1.0 - elapsed_time, 0))
-    except KeyboardInterrupt:
-        print("Program interrupted and exiting...")
+def get_info(key: str):
+    db_response = db.request(key)
+    if db_response is not None:
+        return db_response
+    else:
+        http_response = http.request(key, http_config)
+        return http_response
+
+
+def write_fail_log_to_file():
+    pass  # TODO
+
+
+def parse_in_cpp(bytes: str) -> Dict[str, bool]:
+    pass
 
 
 def main() -> int:
-    print(zparser.hello_from_cpp())
+    TARGET_FIELD: str = 'Type'
+    structured_data: Dict[str, List[str]] = get_parsed_source_data('test_data_source.txt', '\r\n', ',')
+    parsed_data = dict()
+    for key, value in structured_data.items():
+        parsed_data[key] = get_info(key).get(TARGET_FIELD)
+        if parsed_data[key] is None:
+            write_fail_log_to_file()
+        else:
+            for bytes in structured_data[key]:
+                struct = parse_in_cpp(bytes)
+                # todo
 
-    z = zparser.zparser()
-    print(z.hello_from_zparser())
-    Parser.init()
-
-    print(compare_fields(source, target))
-
-    # Исходные наборы битов
-    a = 0b010  # 2 в десятичной системе
-    b = 0b110  # 6 в десятичной системе
-
-    # Применение операции XOR
-    xor_result = a ^ b
-
-    # Вывод результата в двоичном виде
-    print(f'{xor_result:03b}')
-    do_something()
     return 0
 
 
