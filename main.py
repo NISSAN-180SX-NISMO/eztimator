@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Iterator, Tuple, List, Dict
 
 import zparser
@@ -23,13 +25,12 @@ def get_parsed_source_data(file_path: str, line_delimiter: str, value_delimiter:
     return source_data
 
 
-db: ... = ...           # TODO
-http: ... = ...         # TODO
+db: ... = ...  # TODO
+http: ... = ...  # TODO
 http_config: ... = ...  # TODO
 
 
 def get_info(key: str):
-    pass
     db_response = db.request(key)
     if db_response is not None:
         return db_response
@@ -41,7 +42,8 @@ def get_info(key: str):
 def write_fail_log_to_file():
     pass  # TODO
 
-class Estimator():
+
+class Estimator:
     def __init__(self):
         pass
 
@@ -57,14 +59,14 @@ def main() -> None:
     estimator: Estimator = Estimator()
     TARGET_FIELD: str = 'Type'
     structured_data: Dict[str, List[str]] = get_parsed_source_data('test_data_source.txt', '\r\n', ',')
-    requested_data = dict()
-    parsed_data = dict()
+    requested_data: Dict[str, str | None] = dict()
+    parsed_data: Dict[str, List[...]] = dict()
     for key, value in structured_data.items():
         requested_data[key] = get_info(key).get(TARGET_FIELD)
         if requested_data[key] is None:
             write_fail_log_to_file()
         else:
-            parsed_data[key] = [zparser.parseStructA(bytes_str) for bytes_str in structured_data[key]]
+            parsed_data[key] = [zparser.parseStructA(bytes_str) for bytes_str in value]
             estimator.add_to_estimate(parsed_data[key])
 
 
