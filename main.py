@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import sys
 from typing import Iterator, Tuple, List, Dict
 
 import zparser
+import time
 
 
 def get_split_line_iterator(file_path: str, line_delimiter: str, value_delimiter: str) \
@@ -56,18 +58,32 @@ class Estimator:
 
 
 def main() -> None:
-    estimator: Estimator = Estimator()
-    TARGET_FIELD: str = 'Type'
-    structured_data: Dict[str, List[str]] = get_parsed_source_data('test_data_source.txt', '\r\n', ',')
-    requested_data: Dict[str, str | None] = dict()
-    parsed_data: Dict[str, List[...]] = dict()
-    for key, value in structured_data.items():
-        requested_data[key] = get_info(key).get(TARGET_FIELD)
-        if requested_data[key] is None:
-            write_fail_log_to_file()
-        else:
-            parsed_data[key] = [zparser.parseStructA(bytes_str) for bytes_str in value]
-            estimator.add_to_estimate(parsed_data[key])
+    # estimator: Estimator = Estimator()
+    # TARGET_FIELD: str = 'Type'
+    # structured_data: Dict[str, List[str]] = get_parsed_source_data('test_data_source.txt', '\r\n', ',')
+    # requested_data: Dict[str, str | None] = dict()
+    # parsed_data: Dict[str, List[...]] = dict()
+    # for key, value in structured_data.items():
+    #     requested_data[key] = get_info(key).get(TARGET_FIELD)
+    #     if requested_data[key] is None:
+    #         write_fail_log_to_file()
+    #     else:
+    #         parsed_data[key] = [zparser.parseStructA(bytes_str) for bytes_str in value]
+    #         estimator.add_to_estimate(parsed_data[key])
+
+    with open('test.txt', 'r') as file:
+        line = file.readline()
+        start_time = time.time()
+        for i in range(10000):
+            # zparser.parse(list(line.encode('utf-8')))
+            zparser.parse(line)
+
+        # Засекаем конечное время
+        end_time = time.time()
+
+        # Вычисляем время выполнения
+        execution_time = end_time - start_time
+        print(f"Execution time: {execution_time} seconds")
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "src/zparser.h"
 
 namespace py = pybind11;
@@ -27,4 +28,6 @@ PYBIND11_MODULE(zparser, m) {
             .def_readwrite("field3", &StructA::field3);
 
     m.def("parseStructA", &parseStructA, "Parse a byte string into a StructA object");
+    m.def("parse", py::overload_cast<const std::string&>(&parse));
+    m.def("parse", py::overload_cast<const std::vector<uint8_t>&>(&parse));
 }

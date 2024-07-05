@@ -41,5 +41,8 @@ struct StructA
 
 StructA parseStructA(const std::string& byte_string);
 
+bool parse(const std::vector<uint8_t>& bytes);
+bool parse(const std::string& bytes);
+
 
 #endif //ZPARSER_ZPARSER_H
