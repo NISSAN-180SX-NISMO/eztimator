@@ -1,5 +1,7 @@
 from typing import Iterator, Tuple, List, Dict
 
+import zparser
+
 
 def get_split_line_iterator(file_path: str, line_delimiter: str, value_delimiter: str) \
         -> Iterator[Tuple[str, List[str]]]:
@@ -27,6 +29,7 @@ http_config: ... = ...  # TODO
 
 
 def get_info(key: str):
+    pass
     db_response = db.request(key)
     if db_response is not None:
         return db_response
@@ -38,25 +41,31 @@ def get_info(key: str):
 def write_fail_log_to_file():
     pass  # TODO
 
+class Estimator():
+    def __init__(self):
+        pass
 
-def parse_in_cpp(bytes: str) -> Dict[str, bool]:
-    pass
+    def add_to_estimate(self, values: ...):
+        pass
+
+    def start_estimate(self):
+        # TODO: вызов алгоритма на множестве значений
+        pass
 
 
-def main() -> int:
+def main() -> None:
+    estimator: Estimator = Estimator()
     TARGET_FIELD: str = 'Type'
     structured_data: Dict[str, List[str]] = get_parsed_source_data('test_data_source.txt', '\r\n', ',')
+    requested_data = dict()
     parsed_data = dict()
     for key, value in structured_data.items():
-        parsed_data[key] = get_info(key).get(TARGET_FIELD)
-        if parsed_data[key] is None:
+        requested_data[key] = get_info(key).get(TARGET_FIELD)
+        if requested_data[key] is None:
             write_fail_log_to_file()
         else:
-            for bytes in structured_data[key]:
-                struct = parse_in_cpp(bytes)
-                # todo
-
-    return 0
+            parsed_data[key] = [zparser.parseStructA(bytes_str) for bytes_str in structured_data[key]]
+            estimator.add_to_estimate(parsed_data[key])
 
 
 if __name__ == '__main__':

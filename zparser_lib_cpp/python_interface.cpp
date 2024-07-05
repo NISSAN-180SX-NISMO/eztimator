@@ -19,4 +19,12 @@ PYBIND11_MODULE(zparser, m) {
         .value("DONE", zparser::WORK_STATUS::DONE)
         .value("NOTHING_TO_DO", zparser::WORK_STATUS::NOTHING_TO_DO)
         .export_values();
+
+    pybind11::class_<StructA>(m, "StructA")
+            .def(pybind11::init<>())
+            .def_readwrite("field1", &StructA::field1)
+            .def_readwrite("field2", &StructA::field2)
+            .def_readwrite("field3", &StructA::field3);
+
+    m.def("parseStructA", &parseStructA, "Parse a byte string into a StructA object");
 }

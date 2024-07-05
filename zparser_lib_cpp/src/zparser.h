@@ -6,6 +6,8 @@
 #define ZPARSER_ZPARSER_H
 #include <string>
 #include <cstdint>
+#include <sstream>
+#include <iostream>
 
 class zparser
 {
@@ -28,6 +30,16 @@ private:
 };
 
 std::string hello_from_cpp();
+
+
+struct StructA
+{
+    bool field1;
+    bool field2;
+    bool field3;
+};
+
+StructA parseStructA(const std::string& byte_string);
 
 
 #endif //ZPARSER_ZPARSER_H

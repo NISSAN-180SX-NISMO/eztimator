@@ -41,3 +41,28 @@ std::string hello_from_cpp()
 {
     return "omg, cpp!";
 }
+
+StructA parseStructA(const std::string& byte_string)
+{
+    return StructA
+            {
+                    bool(rand()&2),
+                    bool(rand()&2),
+                    bool(rand()&2)
+            };
+    // TODO: Придумать чета епта
+//    std::stringstream stream(byte_string, std::ios::in | std::ios::binary);
+//    stream.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+//
+//    uint8_t field1, field2, field3;
+//    try {
+//        stream.read(reinterpret_cast<char*>(&field1), sizeof(field1));
+//        a.field1 = !(field1 % 2);
+//        stream.read(reinterpret_cast<char*>(&field2), sizeof(field2));
+//        a.field2 = !(field2 % 2);
+//        stream.read(reinterpret_cast<char*>(&field3), sizeof(field3));
+//        a.field3 = !(field3 % 2);
+//    } catch (const std::ios_base::failure& e) {
+//        std::cerr << "Exception: " << e.what() << std::endl;
+//    }
+}
