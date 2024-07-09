@@ -1,0 +1,2 @@
+class DataSourceParserInterface:
+    pass

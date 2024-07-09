@@ -1,0 +1,2 @@
+class DataBaseServiceInterface:
+    pass
