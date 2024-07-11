@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Iterable, List, Optional, Tuple
 
-from modules.interfaces.data_source_parser_interface import DataSourceParserInterface
+from modules.interfaces.source_data_iterable_parser_interface import SourceDataIterableParserInterface
 
 
-class SourceDataIterableParser(DataSourceParserInterface):
+class SourceDataIterableParser(SourceDataIterableParserInterface):
     def __init__(self, value_delimiter: str = ',', line_delimiter: str = '\n'):
         self._value_delimiter = value_delimiter
         self._line_delimiter = line_delimiter

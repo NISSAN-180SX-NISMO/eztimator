@@ -1,0 +1,19 @@
+{
+  "estimate": {
+    "target_keys": [],
+    "matches_percent": 50
+  },
+  "data_base": {
+    "path": "",
+    "username": "",
+    "password": ""
+  },
+  "http": {
+    "targets": []
+  },
+  "data_source": {
+    "path": "data_source.txt",
+    "line_delimiter": "\\n",
+    "value_delimiter": ","
+  }
+}

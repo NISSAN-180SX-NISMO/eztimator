@@ -4,11 +4,11 @@ from modules.dtos.response import Response
 from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterface
 
 
-class SQLiteDataBaseGateway(DataBaseGatewayInterface):
+class SQLiteDataBaseAsyncGateway(DataBaseGatewayInterface):
     def __init__(self, db_file_path: str, username: str = None, password: str = None):
         self._db_file_path = db_file_path
-        self._username = username
-        self._password = password
+        self._username = username  # todo need?
+        self._password = password  # todo need?
         self._connection = None
 
     async def get_info(self, key: str, table: str) -> Response:
