@@ -1,21 +1,15 @@
 from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
 
 @dataclass
-class EstimateSettings:
-    matches_percent: int = field(default=0)
-
-    @property
-    def matches_percent(self) -> int:
-        return self.matches_percent
-
-    @matches_percent.setter
-    def matches_percent(self, value: int):
-        if 0 <= value <= 100:
-            self.matches_percent = value
-        else:
-            raise ValueError("matches_percent must be between 0 and 100")
+class EstimateResult:
+    field: str
+    value: str
+    percent: float
 
 
-class EstimatorInterface:
-    pass
+class EstimatorInterface(ABS):
+    @abstractmethod
+    def estimate(self, structs: List[CppStruct]) -> List[EstimateResult]:
+        pass

@@ -5,44 +5,53 @@
 #ifndef ZPARSER_ZPARSER_H
 #define ZPARSER_ZPARSER_H
 #include <string>
-#include <cstdint>
-#include <sstream>
-#include <iostream>
+#include <vector>
+#include <cstdlib>
 
-class zparser
-{
-public:
-    enum WORK_STATUS: uint8_t
-    {
-        IN_PROCESS,
-        DONE,
-        NOTHING_TO_DO
-    };
-    std::string hello_from_zparser();
-/// interface:
-    void init();
-    void do_work(uint8_t secForWork);
-    WORK_STATUS checkWorkIsDone();
-    std::string getWorkResult();
-private:
-    std::string workResult;
-    WORK_STATUS status;
+struct BaseStruct {
+    std::string struct_type;
 };
 
-std::string hello_from_cpp();
-
-
-struct StructA
-{
-    bool field1;
-    bool field2;
-    bool field3;
+struct zstruct : public BaseStruct {
+    int a;
+    double b;
+    char c;
 };
 
-StructA parseStructA(const std::string& byte_string);
+struct vstruct : public BaseStruct {
+    int d;
+    double e;
+    char c;
+};
 
-bool parse(const std::vector<uint8_t>& bytes);
-bool parse(const std::string& bytes);
+void parse_zstruct(zstruct& zs) {
+    zs.a = rand() % 100;
+    zs.b = (double)(rand() % 10000) / 100;
+    zs.c = 'A' + (rand() % 26);
+}
+
+void parse_vstruct(vstruct& vs) {
+    vs.d = rand() % 100;
+    vs.e = (double)(rand() % 10000) / 100;
+    vs.c = 'A' + (rand() % 26);
+}
+
+BaseStruct* process_bytes(const std::string& byte_string) {
+    if (byte_string.empty()) {
+        return;
+    }
+
+    uint8_t first_byte = byte_string[0];
+    if (first_byte % 2 == 0) {
+        zstruct zs;
+        parse_zstruct(zs);
+        return &zs;
+    } else {
+        vstruct vs;
+        parse_vstruct(vs);
+        return &vs;
+    }
+}
 
 
 #endif //ZPARSER_ZPARSER_H

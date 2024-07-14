@@ -5,29 +5,23 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(zparser, m) {
-    m.def("hello_from_cpp", &hello_from_cpp);
-
-    py::class_<zparser>(m, "zparser")
+    py::class_<BaseStruct>(m, "BaseStruct")
         .def(py::init<>())
-        .def("hello_from_zparser", &zparser::hello_from_zparser)
-        .def("init", &zparser::init)
-        .def("do_work", &zparser::do_work)
-        .def("checkWorkIsDone", &zparser::checkWorkIsDone)
-        .def("getWorkResult", &zparser::getWorkResult);
+        .def_readwrite("struct_type", &BaseStruct::struct_type);
 
-    py::enum_<zparser::WORK_STATUS>(m, "WORK_STATUS")
-        .value("IN_PROCESS", zparser::WORK_STATUS::IN_PROCESS)
-        .value("DONE", zparser::WORK_STATUS::DONE)
-        .value("NOTHING_TO_DO", zparser::WORK_STATUS::NOTHING_TO_DO)
-        .export_values();
+    py::class_<zstruct, BaseStruct>(m, "zstruct")
+        .def(py::init<>())
+        .def_readwrite("a", &zstruct::a)
+        .def_readwrite("b", &zstruct::b)
+        .def_readwrite("c", &zstruct::c);
 
-    pybind11::class_<StructA>(m, "StructA")
-            .def(pybind11::init<>())
-            .def_readwrite("field1", &StructA::field1)
-            .def_readwrite("field2", &StructA::field2)
-            .def_readwrite("field3", &StructA::field3);
+    py::class_<vstruct, BaseStruct>(m, "vstruct")
+        .def(py::init<>());
+        .def_readwrite("d", &zstruct::d)
+        .def_readwrite("e", &zstruct::e)
+        .def_readwrite("c", &zstruct::c);
 
-    m.def("parseStructA", &parseStructA, "Parse a byte string into a StructA object");
-    m.def("parse", py::overload_cast<const std::string&>(&parse));
-    m.def("parse", py::overload_cast<const std::vector<uint8_t>&>(&parse));
+    m.def("parse_zstruct", &parse_zstruct, "A function that fills a zstruct with random values");
+    m.def("parse_vstruct", &parse_vstruct, "A function that fills a vstruct with random values");
+    m.def("process_bytes", &process_bytes, "A function that processes a byte string");
 }
