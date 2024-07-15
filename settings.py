@@ -1,27 +1,26 @@
 import json
 from dataclasses import dataclass
 from typing import List, ClassVar
-
-from modules.implementations.config_parser.JsonConfigParser import JsonConfigParser
 from modules.interfaces.config_parser_interface import ConfigParserInterface
+from modules.implementations.config_parser.JsonConfigParser import JsonConfigParser
+
+global_config_parser: ConfigParserInterface = JsonConfigParser('config.json')
 
 
 @dataclass
 class Settings:
-    _instance: ClassVar['Settings'] = None
-    _initialized: ClassVar[bool] = False
-    _config_parser = None
+    _instance = None
 
-    @staticmethod
-    def get_instance() -> 'Settings':
-        if Settings._instance is None:
-            Settings._config_parser = JsonConfigParser('config.json')
-            Settings._instance = Settings._load_from_config()
-            Settings._initialized = True
-        return Settings._instance
+    def __new__(cls, *args, **kwargs):
+        if not isinstance(cls._instance, cls):
+            cls._instance = super(Settings, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
 
-    def _load_from_config(self, ) -> 'Settings':
-        config = self._config_parser.parse()
+    def __init__(self):
+        self._load_from_config()
+
+    def _load_from_config(self):
+        config = global_config_parser.parse()
         self.estimate = self.Estimate(
             target_key=config['estimate']['target_key'],
             matches_percent=config['estimate']['matches_percent']
@@ -35,8 +34,8 @@ class Settings:
         self.http = self.Http(
             targets=config['http']['targets']
         )
-        self.data_source = self.SourceData(
-            path=config['data_source']['path'],
+        self.source_data = self.SourceData(
+            file_path=config['data_source']['path'],
             line_delimiter=config['data_source']['line_delimiter'],
             value_delimiter=config['data_source']['value_delimiter']
         )
@@ -45,13 +44,13 @@ class Settings:
     class Estimate:
         # target_keys: List[str]
         target_key: str
-        matches_percent: int
+        matches_percent: float
 
     @dataclass
     class DataBase:
         path: str
-        username: int
-        password: int
+        username: str
+        password: str
         table: str
 
     @dataclass
@@ -60,11 +59,14 @@ class Settings:
 
     @dataclass
     class SourceData:
-        path: str
-        line_delimiter: int
-        value_delimiter: int
+        file_path: str
+        line_delimiter: str
+        value_delimiter: str
 
     estimate: Estimate
     data_base: DataBase
     http: Http
-    data_source: SourceData
+    source_data: SourceData
+
+
+SETTINGS = Settings()

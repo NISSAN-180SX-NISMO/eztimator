@@ -2,33 +2,30 @@ from collections import Counter
 from typing import List, Dict
 
 from modules.dtos.estimated_collection import EstimatedCollection
-from modules.interfaces.estimator_interface import EstimateResult, EstimatorInterface
+from modules.interfaces.estimator_interface import EstimateResult, EstimatorInterface, EstimateResults
 
 
 class StructsEstimator(EstimatorInterface):
-    def estimate(self, collection: EstimatedCollection) -> List[EstimateResult]:
-        # 1. Список уникальных ключей
-        unique_keys = set(struct.key for struct in collection.all_structs())
+    def estimate(self, collection: EstimatedCollection) -> EstimateResults:
+        unique_fields = {}
+        for cpp_struct in collection.all_structs():
+            for key in cpp_struct.struct.keys():
+                if key not in unique_fields:
+                    unique_fields[key] = {}
+        # print(unique_keys)
+        for key in unique_fields.keys():
+            for cpp_struct in collection.all_structs():
+                if key in cpp_struct.struct:
+                    value = cpp_struct.struct[key]
+                    if value not in unique_fields[key]:
+                        unique_fields[key][value] = 1
+                    else:
+                        unique_fields[key][value] += 1
+        # print(unique_keys)
+        results_map = dict()
+        for key, values_dict in unique_fields.items():
+            total_values = sum(values_dict.values())
+            percentage_of_values = {value: (count / total_values) * 100 for value, count in values_dict.items()}
+            results_map[key] = (EstimateResult(field=key, percentage_of_values=percentage_of_values))
 
-        results: List[EstimateResult] = []
-
-        # 2. Идем по списку уникальных ключей
-        for key in unique_keys:
-            # Собираем все значения для данного ключа
-            values = [struct[key] for struct in collection.all_structs() if key in struct]
-
-            # 3. Сортируем список значений
-            values.sort()
-
-            # 4. Находим максимальную длину повторяющегося значения
-            counter = Counter(values)
-            max_count_value = max(counter.items(), key=lambda x: x[1])
-
-            # 5. Вычисляем процент
-            percent = max_count_value[1] / len(values) * 100
-
-            # 6. Добавляем поле, его значение и процент в EstimateResult
-            result = EstimateResult(field=key, value=max_count_value[0], percent=percent)
-            results.append(result)
-
-        return results
+        return EstimateResults(results_map=results_map)

@@ -3,20 +3,17 @@ from __future__ import annotations
 from typing import Iterable, List, Optional, Tuple
 
 from modules.interfaces.source_data_iterable_parser_interface import SourceDataIterableParserInterface
+from settings import Settings
 
 
 class SourceDataIterableParser(SourceDataIterableParserInterface):
-    def __init__(self, value_delimiter: str = ',', line_delimiter: str = '\n'):
-        self._value_delimiter = value_delimiter
-        self._line_delimiter = line_delimiter
-
-    def iterable_line(self, file_path: str) \
+    def iterable_line(self, cfg: Settings.SourceData) \
             -> Iterable[Tuple[Optional[str], List[str]]]:
-        with open(file_path, 'r', newline=self._line_delimiter) as file:
+        with open(cfg.file_path, 'r', newline=cfg.line_delimiter) as file:
             for line in file:
                 line = line.strip()
                 if line:
-                    values = [v.strip() for v in line.split(self._value_delimiter)]
+                    values = [v.strip() for v in line.split(cfg.value_delimiter)]
                     if len(values) > 0:
                         key = values.pop(0)
                         yield key, values

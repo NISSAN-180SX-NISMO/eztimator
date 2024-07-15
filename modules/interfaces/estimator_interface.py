@@ -7,8 +7,7 @@ from modules.dtos.estimated_collection import EstimatedCollection
 @dataclass
 class EstimateResult:
     field: str
-    value: str
-    percent: float
+    percentage_of_values: Dict[str, float]
 
 
 @dataclass
@@ -18,5 +17,5 @@ class EstimateResults:
 
 class EstimatorInterface(ABC):
     @abstractmethod
-    def estimate(self, collection: EstimatedCollection) -> EstimateResult:
+    def estimate(self, collection: EstimatedCollection) -> EstimateResults:
         pass

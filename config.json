@@ -1,8 +1,8 @@
 {
   "estimate": {
     "target_keys": [],
-    "target_key": "",
-    "matches_percent": 50
+    "target_key": "svo",
+    "matches_percent": 10
   },
   "data_base": {
     "path": "",
@@ -14,8 +14,8 @@
     "targets": []
   },
   "data_source": {
-    "path": "data_source.txt",
-    "line_delimiter": "\\n",
+    "path": "test_data_source.txt",
+    "line_delimiter": "\n",
     "value_delimiter": ","
   }
 }
