@@ -5,7 +5,7 @@ from typing import Dict
 
 @dataclass
 class CppStruct:
-    struct: Dict[str, ...]
+    struct: Dict
 
 
 class BytesParserInterface(ABC):

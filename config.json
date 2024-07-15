@@ -1,12 +1,14 @@
 {
   "estimate": {
     "target_keys": [],
+    "target_key": "",
     "matches_percent": 50
   },
   "data_base": {
     "path": "",
     "username": "",
-    "password": ""
+    "password": "",
+    "table": ""
   },
   "http": {
     "targets": []

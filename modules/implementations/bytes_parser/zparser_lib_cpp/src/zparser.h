@@ -38,7 +38,7 @@ void parse_vstruct(vstruct& vs) {
 
 BaseStruct* process_bytes(const std::string& byte_string) {
     if (byte_string.empty()) {
-        return;
+        return nullptr;
     }
 
     uint8_t first_byte = byte_string[0];

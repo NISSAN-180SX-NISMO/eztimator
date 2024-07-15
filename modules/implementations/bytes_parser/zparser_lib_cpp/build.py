@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 ext_modules = [
     Extension(
         'zparser',  # название нашей либы
-        ['python_interface.cpp', 'src/zparser.cpp'],  # файлики которые компилируем
+        ['python_interface.cpp'],  # файлики которые компилируем
         include_dirs=[pybind11.get_include()],  # не забываем добавить инклюды pybind11
         language='c++',
         extra_compile_args=['-std=c++11'],  # используем с++11

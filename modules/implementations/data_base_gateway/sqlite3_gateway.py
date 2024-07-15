@@ -2,6 +2,7 @@ import aiosqlite
 
 from modules.dtos.response import Response
 from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterface
+from settings import Settings
 
 
 class SQLiteDataBaseAsyncGateway(DataBaseGatewayInterface):
@@ -11,11 +12,11 @@ class SQLiteDataBaseAsyncGateway(DataBaseGatewayInterface):
         self._password = password  # todo need?
         self._connection = None
 
-    async def get_info(self, key: str, table: str) -> Response:
+    async def get_info(self, key: str, cfg: Settings.DataBase) -> Response:
         try:
             async with aiosqlite.connect(self._db_file_path) as db:
                 cursor = await db.cursor()
-                await cursor.execute(f"SELECT * FROM ? WHERE key = ?", (table, key,))
+                await cursor.execute(f"SELECT * FROM ? WHERE key = ?", (cfg.table, key,))
                 row = await cursor.fetchone()
 
                 if row:
@@ -23,7 +24,7 @@ class SQLiteDataBaseAsyncGateway(DataBaseGatewayInterface):
                     info = {columns[i]: row[i] for i in range(len(columns))}
                     return Response(success=True, info=info)
                 else:
-                    return Response(success=False, info={"error": f"Key '{key}' not found in table '{table}'"})
+                    return Response(success=False, info={"error": f"Key '{key}' not found in table '{cfg.table}'"})
 
         except aiosqlite.Error as e:
             return Response(success=False, info={"error": f"aiosqlite error: {str(e)}"})

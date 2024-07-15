@@ -1,2 +1,0 @@
-class HttpServiceInterface:
-    pass

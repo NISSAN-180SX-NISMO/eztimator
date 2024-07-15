@@ -16,10 +16,10 @@ PYBIND11_MODULE(zparser, m) {
         .def_readwrite("c", &zstruct::c);
 
     py::class_<vstruct, BaseStruct>(m, "vstruct")
-        .def(py::init<>());
-        .def_readwrite("d", &zstruct::d)
-        .def_readwrite("e", &zstruct::e)
-        .def_readwrite("c", &zstruct::c);
+        .def(py::init<>())
+        .def_readwrite("d", &vstruct::d)
+        .def_readwrite("e", &vstruct::e)
+        .def_readwrite("c", &vstruct::c);
 
     m.def("parse_zstruct", &parse_zstruct, "A function that fills a zstruct with random values");
     m.def("parse_vstruct", &parse_vstruct, "A function that fills a vstruct with random values");

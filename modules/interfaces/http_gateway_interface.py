@@ -5,7 +5,7 @@ from modules.dtos.response import Response
 from settings import Settings
 
 
-class DataBaseGatewayInterface(ABC):
+class HttpGatewayInterface(ABC):
     @abstractmethod
-    async def get_info(self, key: str, cfg: Settings.DataBase) -> Response:
+    async def get_info(self, key: str, cfg: Settings.Http) -> Response:
         pass

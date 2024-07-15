@@ -1,18 +1,21 @@
 from collections import Counter
 from typing import List, Dict
-from modules.interfaces.estimator_interface import EstimateResult
+
+from modules.dtos.estimated_collection import EstimatedCollection
+from modules.interfaces.estimator_interface import EstimateResult, EstimatorInterface
+
 
 class StructsEstimator(EstimatorInterface):
-    def estimate(self, structs: List[Dict]) -> List[EstimateResult]:
+    def estimate(self, collection: EstimatedCollection) -> List[EstimateResult]:
         # 1. Список уникальных ключей
-        unique_keys = set(key for struct in structs for key in struct.keys())
+        unique_keys = set(struct.key for struct in collection.all_structs())
 
         results: List[EstimateResult] = []
 
         # 2. Идем по списку уникальных ключей
         for key in unique_keys:
             # Собираем все значения для данного ключа
-            values = [struct[key] for struct in structs if key in struct]
+            values = [struct[key] for struct in collection.all_structs() if key in struct]
 
             # 3. Сортируем список значений
             values.sort()

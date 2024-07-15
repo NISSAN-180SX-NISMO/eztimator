@@ -1,65 +1,80 @@
 # TODO: Сделать менеджер, который будет в себя всасывать интерфесы модулей всех и работать с ними, чтобы легко можно было инжектить в разные имплементации модулей \
 # таких как парсер файла, парсер конфига, и самое главное - оценщик
-from dataclasses import dataclass
-from typing import Dict
-
+from modules.dtos.estimated_collection import EstimatedCollection
+from modules.dtos.response import DataBaseResponse, HttpResponse
 from modules.interfaces.bytes_parser_interface import BytesParserInterface
 from modules.interfaces.config_parser_interface import ConfigParserInterface
 from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterface
 from modules.interfaces.source_data_iterable_parser_interface import SourceDataIterableParserInterface
-from modules.interfaces.estimator_interface import EstimatorInterface
-from modules.interfaces.http_service_interface import HttpServiceInterface
-
-
-@dataclass
-class EstimateResult:
-    results: Dict[str: str]  # FIXME: Некоторые красившевства
+from modules.interfaces.estimator_interface import EstimatorInterface, EstimateResult
+from modules.interfaces.http_gateway_interface import HttpGatewayInterface
+from settings import Settings
 
 
 class CoreManager:
     def __init__(self):
-        self.bytes_parser: BytesParserInterface = BytesParserInterface()
-        self.config_parser: ConfigParserInterface = ConfigParserInterface()
-        self.data_base_gateway: DataBaseGatewayInterface = DataBaseGatewayInterface()
-        self.source_data_parser: SourceDataIterableParserInterface = SourceDataIterableParserInterface()
-        self.estimator: EstimatorInterface = EstimatorInterface()
-        self.http_service: HttpServiceInterface = HttpServiceInterface()
+        self._bytes_parser: BytesParserInterface = None
+        self._config_parser: ConfigParserInterface = None
+        self._data_base_gateway: DataBaseGatewayInterface = None
+        self._source_data_parser: SourceDataIterableParserInterface = None
+        self._estimator: EstimatorInterface = None
+        self._http_gateway: HttpGatewayInterface = None
 
-    def get_estimate_result(self) -> EstimateResult:
-        pass
+        self._cfg: Settings = None
+
+        self._estimated_collection: EstimatedCollection = EstimatedCollection()
+
+    async def _fill_estimated_collection(self) -> None:
+        # Step 1. Parse txt file:
+        for key, values in self._source_data_parser.iterable_line(self._cfg.SourceData.path):
+            # Step 2. Request to DB or HTTP:
+            response: DataBaseResponse = await self._data_base_gateway.get_info(key, self._cfg.DataBase)
+            if not response.success:
+                response: HttpResponse = await self._http_gateway.get_info(key, self._cfg.Http)
+                if not response.success:
+                    continue  # TODO: HANDLE ERROR (write to file)
+            # Step 3. Search for target:я
+            if not response.info.get(self._cfg.Estimate.target_key):
+                continue  # TODO: HANDLE ERROR (write to file)
+            # Step 4: Parse bytes and add to estimate:
+            self._estimated_collection.add(key, [self._bytes_parser.parse(bytes_value) for bytes_value in values])
+
+    async def get_estimate_result(self) -> EstimateResult:
+        await self._fill_estimated_collection()
+        return self._estimator.estimate(self._estimated_collection)
 
     def set_bytes_parser(self, parser: BytesParserInterface):
-        self.bytes_parser = parser
+        self._bytes_parser = parser
 
     def reset_bytes_parser(self):
-        self.bytes_parser = BytesParserInterface()
+        self._bytes_parser = BytesParserInterface()
 
     def set_config_parser(self, parser: ConfigParserInterface):
-        self.config_parser = parser
+        self._config_parser = parser
 
     def reset_config_parser(self):
-        self.config_parser = ConfigParserInterface()
+        self._config_parser = ConfigParserInterface()
 
     def set_data_base_gateway(self, gateway: DataBaseGatewayInterface):
-        self.data_base_gateway = gateway
+        self._data_base_gateway = gateway
 
     def reset_data_base_gateway(self):
-        self.data_base_gateway = DataBaseGatewayInterface()
+        self._data_base_gateway = DataBaseGatewayInterface()
 
     def set_data_source_parser(self, parser: SourceDataIterableParserInterface):
-        self.source_data_parser = parser
+        self._source_data_parser = parser
 
     def reset_data_source_parser(self):
-        self.source_data_parser = SourceDataIterableParserInterface()
+        self._source_data_parser = SourceDataIterableParserInterface()
 
     def set_estimator(self, estimator: EstimatorInterface):
-        self.estimator = estimator
+        self._estimator = estimator
 
     def reset_estimator(self):
-        self.estimator = EstimatorInterface()
+        self._estimator = EstimatorInterface()
 
-    def set_http_service(self, service: HttpServiceInterface):
-        self.http_service = service
+    def set_http_gateway(self, service: HttpGatewayInterface):
+        self._http_gateway = service
 
-    def reset_http_service(self):
-        self.http_service = HttpServiceInterface()
+    def reset_http_gateway(self):
+        self._http_gateway = HttpGatewayInterface()

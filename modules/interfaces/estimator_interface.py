@@ -1,5 +1,7 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from typing import Dict
+from modules.dtos.estimated_collection import EstimatedCollection
 
 
 @dataclass
@@ -9,7 +11,12 @@ class EstimateResult:
     percent: float
 
 
-class EstimatorInterface(ABS):
+@dataclass
+class EstimateResults:
+    results_map: Dict[str, EstimateResult]
+
+
+class EstimatorInterface(ABC):
     @abstractmethod
-    def estimate(self, structs: List[CppStruct]) -> List[EstimateResult]:
+    def estimate(self, collection: EstimatedCollection) -> EstimateResult:
         pass
