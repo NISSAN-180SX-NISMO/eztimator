@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from modules.aliases.aliases import FieldName
 from modules.dtos.estimated_collection import EstimatedCollection
@@ -7,7 +7,17 @@ from modules.interfaces.estimator_interface import EstimateUniqueFieldResult, Es
     EstimatorInterface, EstimateUniqueFieldValuesResult
 
 
+def convert_to_tuple(data: Any) -> Any:
+    if isinstance(data, list):
+        return tuple(sorted(data))  # TODO: НЮАНС СОРТИРОВКИ ЕБЕЙШИЙ
+    elif isinstance(data, dict):
+        return tuple(data.items())
+    else:
+        return data
+
+
 class StructsEstimator(EstimatorInterface):
+
     def estimate(self, collection: EstimatedCollection) -> EstimateUniqueFieldsResult:
         result: EstimateUniqueFieldsResult = EstimateUniqueFieldsResult()
         for source_key, cpp_struct in collection.all_structs():
@@ -18,7 +28,7 @@ class StructsEstimator(EstimatorInterface):
         for key in result.unique_fields.keys():
             for source_key, cpp_struct in collection.all_structs():
                 if key in cpp_struct:
-                    value = cpp_struct[key]
+                    value = convert_to_tuple(cpp_struct[key])
                     if value not in result.unique_fields[key].percentage_of_values:
                         result.unique_fields[key].percentage_of_values[value] = EstimateUniqueFieldValuesResult(freq=1, included_source_keys={source_key})
                     else:

@@ -2,8 +2,9 @@ import os
 
 # List of target paths to add to PYTHONPATH
 target_paths = [
-    'C:/Users/user/__handlers__/pract/modules/implementations/bytes_parser/zparser_lib_cpp/zparser.cp310-win_amd64.pyd',
-    'C:/Users/user/__handlers__/pract/modules/implementations/bytes_parser/zparser_lib_cpp/'
+    # 'C:/Users/user/__handlers__/pract/modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/zparser.cp310-win_amd64.pyd',
+    # 'C:/Users/user/__handlers__/pract/modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/',  # work
+    'C:/Users/User/Desktop/python/zoyda/modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/'  # home
 ]
 
 # Construct the Python path including all project paths

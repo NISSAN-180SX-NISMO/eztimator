@@ -74,25 +74,25 @@ bool Parser::parse_header(const Parser::byte_vector& bytes, Struct::TYPE &type) 
 
 }
 
-Parser::Struct::zstruct generate_random_zstruct();
-Parser::Struct::vstruct generate_random_vstruct();
+Parser::Struct::zstruct generate_random_zstruct(int);
+Parser::Struct::vstruct generate_random_vstruct(int);
 
 bool Parser::parse_zstruct(const Parser::byte_vector& bytes, Struct::zstruct &instance) {
-    instance = generate_random_zstruct();
+    instance = generate_random_zstruct(bytes.size());
     return true;
 }
 
 bool Parser::parse_vstruct(const Parser::byte_vector& bytes, Struct::vstruct &instance) {
-    instance = generate_random_vstruct();
+    instance = generate_random_vstruct(bytes.size());
     return true;
 }
 
-Parser::Struct::zstruct generate_random_zstruct() {
+Parser::Struct::zstruct generate_random_zstruct(int friends_size) {
     // Задаем диапазоны значений
     std::vector<std::string> names = {"alpha", "beta", "gamma"};
     std::vector<int> capacities = {10, 20, 30};
     std::vector<std::optional<float>> temperatures = {36.6f, 37.0f, std::nullopt};
-    std::vector<int> friends_ids_pool = {1, 2, 3, 4, 5};
+    std::vector<int> friends_ids_pool = {1, 2, 3, 4};
 
     // Генераторы случайных чисел
     std::random_device rd;
@@ -110,15 +110,14 @@ Parser::Struct::zstruct generate_random_zstruct() {
     obj.temperature = temperatures[temperature_dist(gen)];
 
     // Заполняем friends_id случайным количеством друзей
-    int num_friends = friends_dist(gen) + 1;
-    for (int i = 0; i < num_friends; ++i) {
+    for (int i = 0; i < friends_size; ++i) {
         obj.friends_id.push_back(friends_ids_pool[friends_dist(gen)]);
     }
 
     return obj;
 }
 
-Parser::Struct::vstruct generate_random_vstruct() {
+Parser::Struct::vstruct generate_random_vstruct(int friends_size) {
     // Задаем диапазоны значений
     std::vector<std::string> names = {"alpha", "beta", "gamma"};
     std::vector<int> capacities = {10, 20, 30};
@@ -141,8 +140,7 @@ Parser::Struct::vstruct generate_random_vstruct() {
     obj.weight = weights[weight_dist(gen)];
 
     // Заполняем friends_id случайным количеством друзей
-    int num_friends = friends_dist(gen) + 1;
-    for (int i = 0; i < num_friends; ++i) {
+    for (int i = 0; i < friends_size; ++i) {
         obj.friends_id.push_back(friends_ids_pool[friends_dist(gen)]);
     }
 

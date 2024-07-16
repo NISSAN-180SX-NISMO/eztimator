@@ -5,5 +5,5 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(zparser, m) {
-    m.def("parse", &Parser::parse);
+    m.def("parse_to_json", &Api::parse_to_json);
 }

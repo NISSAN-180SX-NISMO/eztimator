@@ -10,8 +10,8 @@
 
 # build:
 build
-modules/implementations/bytes_parser/zparser_lib_cpp/build
-modules/implementations/bytes_parser/zparser_lib_cpp/cmake-build-debug
+modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/build
+modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/cmake-build-debug
 
 # govno:
 *venv

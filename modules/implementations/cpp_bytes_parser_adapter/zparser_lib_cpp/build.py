@@ -1,15 +1,5 @@
 import pybind11
 from setuptools import setup, Extension
-import os
-
-# Задайте полный путь к вашему компилятору GCC
-gcc_path = 'C:/Qt/Tools/mingw1120_64/bin/gcc.exe'
-gxx_path = 'C:/Qt/Tools/mingw1120_64/bin/g++.exe'
-
-# Установка переменных среды для использования конкретного GCC
-os.environ['CC'] = gcc_path
-os.environ['CXX'] = gxx_path
-os.environ['LDSHARED'] = f'{gxx_path} -shared'
 
 extra_compile_args = ['/std:c++17']
 
@@ -31,6 +21,7 @@ setup(
     description='pybind11 extension',
     ext_modules=ext_modules,
     requires=['pybind11'],
-    python_requires='==3.10',  # указываем, что ваше расширение предназначено именно для Python 3.10
+    # python_requires='==3.10',  # on work
+    python_requires='==3.12',  # on home
 )
 
