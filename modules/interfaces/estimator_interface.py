@@ -1,21 +1,28 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, List, Set, Tuple
+
+from modules.aliases.aliases import FieldName, SourceKey, FieldValue, ValueFreq
 from modules.dtos.estimated_collection import EstimatedCollection
 
 
 @dataclass
-class EstimateResult:
-    field: str
-    percentage_of_values: Dict[str, float]
+class EstimateUniqueFieldValuesResult:
+    freq: ValueFreq
+    included_source_keys: Set[SourceKey]
 
 
 @dataclass
-class EstimateResults:
-    results_map: Dict[str, EstimateResult]
+class EstimateUniqueFieldResult:
+    percentage_of_values: Dict[FieldValue, EstimateUniqueFieldValuesResult] = field(default_factory=dict)
+
+
+@dataclass
+class EstimateUniqueFieldsResult:
+    unique_fields: Dict[FieldName, EstimateUniqueFieldResult] = field(default_factory=dict)
 
 
 class EstimatorInterface(ABC):
     @abstractmethod
-    def estimate(self, collection: EstimatedCollection) -> EstimateResults:
+    def estimate(self, collection: EstimatedCollection) -> EstimateUniqueFieldsResult:
         pass

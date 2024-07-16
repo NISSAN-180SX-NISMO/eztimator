@@ -8,12 +8,13 @@ from modules.implementations.config_parser.JsonConfigParser import JsonConfigPar
 from modules.implementations.data_base_gateway.sqlite3_gateway import SQLiteDataBaseAsyncGateway
 from modules.implementations.estimator.structs_estimator import StructsEstimator
 from modules.implementations.source_data_parser.sourse_data_iterable_parser import SourceDataIterableParser
-from modules.interfaces.estimator_interface import EstimateResults
+from modules.interfaces.estimator_interface import EstimateUniqueFieldsResult
 from settings import Settings, SETTINGS
 
 # TODO: for test
 from modules.interfaces.bytes_parser_interface import BytesParserInterface, CppStruct
 from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterface
+
 
 
 
@@ -45,15 +46,15 @@ class TempBytesParser(BytesParserInterface):
         result_map = {element: random.randint(1, 6) for element in selected_elements}
 
         # Return the result wrapped in a Response object
-        return CppStruct(struct=result_map)
+        return result_map
 
 
-def print_results(results: EstimateResults) -> None:
-    print ("Results: ", results.results_map)
-    for key, result in results.results_map.items():
-        print(f"Поле: {result.field}")
-        for value, percent in result.percentage_of_values.items():
-            print(f"  Значение: {value}, Процент: {percent:.2f}%")
+def print_results(results: EstimateUniqueFieldsResult) -> None:
+    print ("Results: ", results.unique_fields)
+    for key, result in results.unique_fields.items():
+        print(f"Поле: {key}")
+        for value, estimate_unique_field_values_result in result.percentage_of_values.items():
+            print(f"  Значение: {value} - {estimate_unique_field_values_result.freq:.2f}%\tЗадетые ключи: {sorted(estimate_unique_field_values_result.included_source_keys)}")
 
 
 async def main() -> None:

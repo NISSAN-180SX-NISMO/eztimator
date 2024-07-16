@@ -6,7 +6,7 @@ from modules.interfaces.bytes_parser_interface import BytesParserInterface
 from modules.interfaces.config_parser_interface import ConfigParserInterface
 from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterface
 from modules.interfaces.source_data_iterable_parser_interface import SourceDataIterableParserInterface
-from modules.interfaces.estimator_interface import EstimatorInterface, EstimateResult, EstimateResults
+from modules.interfaces.estimator_interface import EstimatorInterface, EstimateUniqueFieldsResult
 from modules.interfaces.http_gateway_interface import HttpGatewayInterface
 from settings import Settings, SETTINGS
 
@@ -37,7 +37,7 @@ class CoreManager:
             # Step 4: Parse bytes and add to estimate:
             self._estimated_collection.add(key, [self._bytes_parser.parse(bytes_value) for bytes_value in values])
 
-    async def get_estimate_result(self) -> EstimateResults:
+    async def get_estimate_result(self) -> EstimateUniqueFieldsResult:
         await self._fill_estimated_collection()
         return self._estimator.estimate(self._estimated_collection)
 

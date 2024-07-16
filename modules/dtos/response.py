@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from abc import ABC
-from typing import Dict
+from modules.aliases.aliases import InfoStruct
 
 
 @dataclass
 class Response(ABC):
     success: bool
-    info: Dict[str, str]
+    info: InfoStruct
 
 
 @dataclass

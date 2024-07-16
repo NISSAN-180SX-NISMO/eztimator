@@ -1,31 +1,33 @@
 from collections import Counter
 from typing import List, Dict
 
+from modules.aliases.aliases import FieldName
 from modules.dtos.estimated_collection import EstimatedCollection
-from modules.interfaces.estimator_interface import EstimateResult, EstimatorInterface, EstimateResults
+from modules.interfaces.estimator_interface import EstimateUniqueFieldResult, EstimateUniqueFieldsResult, \
+    EstimatorInterface, EstimateUniqueFieldValuesResult
 
 
 class StructsEstimator(EstimatorInterface):
-    def estimate(self, collection: EstimatedCollection) -> EstimateResults:
-        unique_fields = {}
-        for cpp_struct in collection.all_structs():
-            for key in cpp_struct.struct.keys():
-                if key not in unique_fields:
-                    unique_fields[key] = {}
-        # print(unique_keys)
-        for key in unique_fields.keys():
-            for cpp_struct in collection.all_structs():
-                if key in cpp_struct.struct:
-                    value = cpp_struct.struct[key]
-                    if value not in unique_fields[key]:
-                        unique_fields[key][value] = 1
-                    else:
-                        unique_fields[key][value] += 1
-        # print(unique_keys)
-        results_map = dict()
-        for key, values_dict in unique_fields.items():
-            total_values = sum(values_dict.values())
-            percentage_of_values = {value: (count / total_values) * 100 for value, count in values_dict.items()}
-            results_map[key] = (EstimateResult(field=key, percentage_of_values=percentage_of_values))
+    def estimate(self, collection: EstimatedCollection) -> EstimateUniqueFieldsResult:
+        result: EstimateUniqueFieldsResult = EstimateUniqueFieldsResult()
+        for source_key, cpp_struct in collection.all_structs():
+            for key in cpp_struct.keys():
+                if key not in result.unique_fields:
+                    result.unique_fields[key] = EstimateUniqueFieldResult()
 
-        return EstimateResults(results_map=results_map)
+        for key in result.unique_fields.keys():
+            for source_key, cpp_struct in collection.all_structs():
+                if key in cpp_struct:
+                    value = cpp_struct[key]
+                    if value not in result.unique_fields[key].percentage_of_values:
+                        result.unique_fields[key].percentage_of_values[value] = EstimateUniqueFieldValuesResult(freq=1, included_source_keys={source_key})
+                    else:
+                        result.unique_fields[key].percentage_of_values[value].freq += 1
+                        result.unique_fields[key].percentage_of_values[value].included_source_keys.add(source_key)
+
+        for key, estimate_unique_field_result in result.unique_fields.items():
+            total_values = sum(value_result.freq for value_result in estimate_unique_field_result.percentage_of_values.values())
+            for estimate_unique_field_values_result in estimate_unique_field_result.percentage_of_values.values():
+                estimate_unique_field_values_result.freq = estimate_unique_field_values_result.freq / total_values * 100
+
+        return result

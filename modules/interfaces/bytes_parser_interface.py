@@ -2,10 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict
 
-
-@dataclass
-class CppStruct:
-    struct: Dict
+from modules.aliases.aliases import CppStruct
 
 
 class BytesParserInterface(ABC):
