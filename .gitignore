@@ -10,10 +10,12 @@
 
 # build:
 build
-zparser_lib_cpp/build
-zparser_lib_cpp/cmake-build-debug
+modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/build
+modules/implementations/cpp_bytes_parser_adapter/zparser_lib_cpp/cmake-build-debug
 
 # govno:
+*.txt
 *venv
+*.venv
 *.idea
 *__pycache__

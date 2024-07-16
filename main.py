@@ -1,79 +1,55 @@
-import pprint
-import sys
-from DataSourceHandlers.FileDataSourceHandler import FileDataSourceHandler
-from DataSourceHandlers.DataSourceHandlerInterface import DataSourceHandlerInterface
-import time
-import keyboard
+import asyncio
+import random
 
-from comparator.FieldsComparator import compare_fields
-source = {
-    'field_0': True,
-    'field_1': False,
-    'field_2': True
-    # 'field_3': True,
-    # 'field_4': False
-}
+from core.core_manager import CoreManager
+from modules.dtos.response import Response, DataBaseResponse
+from modules.implementations.cpp_bytes_parser_adapter.bytes_parser_cpp import CppBytesParserAdapter
+from modules.implementations.data_base_gateway.sqlite3_gateway import SQLiteDataBaseAsyncGateway
+from modules.implementations.estimator.structs_estimator import StructsEstimator
+from modules.implementations.source_data_parser.sourse_data_iterable_parser import SourceDataIterableParser
+from modules.interfaces.estimator_interface import EstimateUniqueFieldsResult
+from settings import Settings, SETTINGS
 
-target = {
-    'field_0': False,
-    'field_1': False,
-    'field_2': True
-    # 'field_3': True,
-    # 'field_4': False
-}
-
-Parser = zparser.zparser()
-
-def on_d_pressed():
-    print("Button 'd' pressed")
-    Parser.do_work(5)
+# TODO: for test
+from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterface
 
 
+class TempDataBaseGateway(DataBaseGatewayInterface):
+
+    async def get_info(self, key: str, cfg: Settings.DataBase) -> Response:
+        # Список с 6 случайными строками
+        random_strings = ["aboba", "svo", "goida", 'gurenya', "zov", 'amogus']
+
+        # Выбираем случайные 3 строки из списка
+        selected_strings = random.sample(random_strings, 3)
+
+        # Создаем словарь, где ключи - выбранные строки, а значения - случайные числа
+        result_map = {s: random_strings[random.randint(1, 5)] for s in selected_strings}
+
+        # Возвращаем ответ в виде объекта Response
+        return DataBaseResponse(success=True, info=result_map)
 
 
-def do_something():
-    try:
-        while True:
-            start_time = time.time()
-
-            # Выполнение функции do_something
-            work_status = "done" if Parser.checkWorkIsDone() == zparser.WORK_STATUS.DONE else "not done"
-            work_result = Parser.getWorkResult()
-
-            print(f"work status: {work_status}; work result: {work_result}")
-
-            # Проверка нажатия клавиши "d"
-            if keyboard.is_pressed('d'):
-                on_d_pressed()
-
-            # Задержка до следующей итерации (раз в секунду)
-            elapsed_time = time.time() - start_time
-            time.sleep(max(1.0 - elapsed_time, 0))
-    except KeyboardInterrupt:
-        print("Program interrupted and exiting...")
+def print_results(results: EstimateUniqueFieldsResult) -> None:
+    print("Results: ", results.unique_fields)
+    for key, result in results.unique_fields.items():
+        print(f"Поле: {key}")
+        for value, estimate_unique_field_values_result in result.percentage_of_values.items():
+            print(
+                f"  Значение: {value} - {estimate_unique_field_values_result.freq:.2f}%\tЗадетые ключи: {sorted(estimate_unique_field_values_result.included_source_keys)}")
 
 
-def main() -> int:
-    print(zparser.hello_from_cpp())
+async def main() -> None:
+    print("Settings: ", SETTINGS)
+    core: CoreManager = CoreManager()
+    core.set_data_source_parser(SourceDataIterableParser())
+    core.set_data_base_gateway(TempDataBaseGateway())
+    core.set_bytes_parser(CppBytesParserAdapter())
+    core.set_estimator(StructsEstimator())
 
-    z = zparser.zparser()
-    print(z.hello_from_zparser())
-    Parser.init()
-
-    print(compare_fields(source, target))
-
-    # Исходные наборы битов
-    a = 0b010  # 2 в десятичной системе
-    b = 0b110  # 6 в десятичной системе
-
-    # Применение операции XOR
-    xor_result = a ^ b
-
-    # Вывод результата в двоичном виде
-    print(f'{xor_result:03b}')
-    do_something()
-    return 0
+    result = await core.get_estimate_result()
+    print_results(result)
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

@@ -1,0 +1,21 @@
+{
+  "estimate": {
+    "target_keys": [],
+    "target_key": "svo",
+    "matches_percent": 10
+  },
+  "data_base": {
+    "path": "",
+    "username": "",
+    "password": "",
+    "table": ""
+  },
+  "http": {
+    "targets": []
+  },
+  "data_source": {
+    "path": "test_data_source.txt",
+    "line_delimiter": "\n",
+    "value_delimiter": ","
+  }
+}
