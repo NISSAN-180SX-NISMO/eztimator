@@ -36,7 +36,7 @@ def write_to_file(data, filename):
             file.write(line + '\n')
 
 if __name__ == "__main__":
-    num_entries = 10000  # Количество записей
+    num_entries = 400  # Количество записей
     filename = 'test_data_source.txt'
     use_predefined_values = False  # Переключение между режимами
     predefined_values = ['A1B2C3', 'D4E5F6', '123ABC', '456DEF', '789012'] if use_predefined_values else None

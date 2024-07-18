@@ -1,6 +1,6 @@
 {
   "estimate": {
-    "target_keys": [<str>],
+    "target_keys": [{ <str>: <regex> }],
     "matches_percent": <float>
   },
   "data_base": {

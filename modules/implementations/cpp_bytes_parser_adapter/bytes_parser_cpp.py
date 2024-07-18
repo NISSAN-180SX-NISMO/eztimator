@@ -2,6 +2,7 @@ import json
 from modules.interfaces.bytes_parser_interface import CppStruct, BytesParserInterface
 import zparser
 
+
 class CppBytesParserAdapter(BytesParserInterface):
 
     def parse(self, bytes_str: str) -> CppStruct:

@@ -25,7 +25,15 @@ namespace Parser
     {
         enum TYPE {
             ZSTRUCT,
-            VSTRUCT
+            VSTRUCT,
+            NESTED
+        };
+
+        struct nested_struct
+        {
+            int id = 123;
+            std::string title = "hello, petyhon!";
+            std::vector<uint8_t> command = {0xFF, 0xD3, 0x4E, 0x00};
         };
 
         struct zstruct
@@ -34,6 +42,7 @@ namespace Parser
             int capacity;
             std::optional<float> temperature;
             std::vector<int> friends_id;
+            nested_struct nstruct = nested_struct();
         };
 
         struct vstruct
@@ -42,10 +51,12 @@ namespace Parser
             int capacity;
             float weight;
             std::vector<int> friends_id;
+            nested_struct nstruct = nested_struct();
         };
 
         std::string to_json(const zstruct&);
         std::string to_json(const vstruct&);
+        std::string to_json(const nested_struct&);
     } // namespace Struct
 
 typedef std::vector<uint8_t> byte_vector;

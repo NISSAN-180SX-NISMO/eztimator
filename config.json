@@ -1,8 +1,11 @@
 {
   "estimate": {
-    "target_keys": [],
-    "target_key": "svo",
-    "matches_percent": 10
+    "target_keys": [{"key": "svo", "value": "goida"}],
+    "matches_percent": 10,
+    "result_printer": {
+      "path": "estimate_result.txt",
+      "only_filtered_view": true
+    }
   },
   "data_base": {
     "path": "",
@@ -13,9 +16,13 @@
   "http": {
     "targets": []
   },
-  "data_source": {
+  "source_data": {
     "path": "test_data_source.txt",
     "line_delimiter": "\n",
     "value_delimiter": ","
+  },
+  "error_handler": {
+    "path": "error_log.txt",
+    "save_timestamp": true
   }
 }

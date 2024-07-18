@@ -13,10 +13,11 @@ class EstimatedCollection:
     # map where key = source key, value = EstimatedEntity aka cpp_struct_list
     estimated_map: Dict[SourceKey, EstimatedEntity] = field(default_factory=dict)
 
-    def all_structs(self) -> Iterable[Tuple[SourceKey, CppStruct]]:
+    def all_structs(self, separate_keys: bool = True) -> Iterable[Tuple[SourceKey, CppStruct]]:
         for key, entity in self.estimated_map.items():
-            for struct in entity.cpp_struct_list:
-                yield key, struct
+            for index, struct in enumerate(entity.cpp_struct_list):
+                modified_key = f"{key}.{index + 1}" if separate_keys else key
+                yield modified_key, struct
 
     def add(self, key: SourceKey, structs: List[CppStruct]) -> None:
         if key not in self.estimated_map:

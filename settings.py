@@ -1,6 +1,8 @@
 import json
-from dataclasses import dataclass
-from typing import List, ClassVar
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
+
+from modules.aliases.aliases import RegexString
 from modules.interfaces.config_parser_interface import ConfigParserInterface
 from modules.implementations.config_parser.JsonConfigParser import JsonConfigParser
 
@@ -21,9 +23,18 @@ class Settings:
 
     def _load_from_config(self):
         config = global_config_parser.parse()
+        # Создаем экземпляры TargetKey с объектами RegexString:
+        target_keys = []
+        for key_data in config['estimate']['target_keys']:
+            regex_string = RegexString(key_data['value'])
+            target_key = self.TargetKey(key=key_data['key'], value=regex_string)
+            target_keys.append(target_key)
+
+        # Теперь создаем экземпляр Estimate, используя созданные объекты TargetKey:
         self.estimate = self.Estimate(
-            target_key=config['estimate']['target_key'],
-            matches_percent=config['estimate']['matches_percent']
+            target_keys=target_keys,
+            matches_percent=config['estimate']['matches_percent'],
+            result_printer=Settings.ResultPrinter(**config['estimate']['result_printer'])
         )
         self.data_base = self.DataBase(
             path=config['data_base']['path'],
@@ -35,16 +46,30 @@ class Settings:
             targets=config['http']['targets']
         )
         self.source_data = self.SourceData(
-            file_path=config['data_source']['path'],
-            line_delimiter=config['data_source']['line_delimiter'],
-            value_delimiter=config['data_source']['value_delimiter']
+            path=config['source_data']['path'],
+            line_delimiter=config['source_data']['line_delimiter'],
+            value_delimiter=config['source_data']['value_delimiter']
+        )
+        self.error_handler = self.ErrorHandler(
+            path=config['error_handler']['path'],
+            save_timestamp=config['error_handler']['save_timestamp']
         )
 
     @dataclass
+    class TargetKey:
+        key: str
+        value: RegexString
+
+    @dataclass
+    class ResultPrinter:
+        path: str
+        only_filtered_view: bool
+
+    @dataclass
     class Estimate:
-        # target_keys: List[str]
-        target_key: str
+        target_keys: List['Settings.TargetKey']
         matches_percent: float
+        result_printer: 'Settings.ResultPrinter'
 
     @dataclass
     class DataBase:
@@ -55,18 +80,24 @@ class Settings:
 
     @dataclass
     class Http:
-        targets: List[str]
+        targets: List[Any]
 
     @dataclass
     class SourceData:
-        file_path: str
+        path: str
         line_delimiter: str
         value_delimiter: str
+
+    @dataclass
+    class ErrorHandler:
+        path: str
+        save_timestamp: bool
 
     estimate: Estimate
     data_base: DataBase
     http: Http
     source_data: SourceData
+    error_handler: ErrorHandler
 
 
 SETTINGS = Settings()

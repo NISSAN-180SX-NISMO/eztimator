@@ -20,7 +20,9 @@ std::string Parser::Struct::to_json(const Parser::Struct::zstruct &obj) {
             oss << ", ";
         }
     }
-    oss << "]}";
+    oss << "]";
+    oss << ", \"nstruct\": " << to_json(obj.nstruct);
+    oss << "}";
     return oss.str();
 }
 
@@ -37,7 +39,29 @@ std::string Parser::Struct::to_json(const Parser::Struct::vstruct &obj) {
             oss << ", ";
         }
     }
-    oss << "]}";
+    oss << "]";
+    oss << ", \"nstruct\": " << to_json(obj.nstruct);
+    oss << "}";
+    return oss.str();
+}
+
+std::string Parser::Struct::to_json(const Parser::Struct::nested_struct &obj)
+{
+    std::ostringstream oss;
+    oss << "{";
+    oss << "\"id\":" << obj.id << ",";
+    oss << "\"title\":\"" << obj.title << "\",";
+    oss << "\"command\":[";
+    for (size_t i = 0; i < obj.command.size(); ++i)
+    {
+        oss << static_cast<int>(obj.command[i]);
+        if (i != obj.command.size() - 1)
+        {
+            oss << ",";
+        }
+    }
+    oss << "]";
+    oss << "}";
     return oss.str();
 }
 

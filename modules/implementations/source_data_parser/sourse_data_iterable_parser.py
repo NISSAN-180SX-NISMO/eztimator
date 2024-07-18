@@ -9,7 +9,7 @@ from settings import Settings
 class SourceDataIterableParser(SourceDataIterableParserInterface):
     def iterable_line(self, cfg: Settings.SourceData) \
             -> Iterable[Tuple[Optional[str], List[str]]]:
-        with open(cfg.file_path, 'r', newline=cfg.line_delimiter) as file:
+        with open(cfg.path, 'r', newline=cfg.line_delimiter) as file:
             for line in file:
                 line = line.strip()
                 if line:

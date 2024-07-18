@@ -1,10 +1,13 @@
 import asyncio
+import io
 import random
 
 from core.core_manager import CoreManager
 from modules.dtos.response import Response, DataBaseResponse
 from modules.implementations.cpp_bytes_parser_adapter.bytes_parser_cpp import CppBytesParserAdapter
 from modules.implementations.data_base_gateway.sqlite3_gateway import SQLiteDataBaseAsyncGateway
+from modules.implementations.error_file_writer.error_file_writer import ErrorFileWriter
+from modules.implementations.estimate_result_printer.estimate_result_printer import EstimateResultPrinter
 from modules.implementations.estimator.structs_estimator import StructsEstimator
 from modules.implementations.source_data_parser.sourse_data_iterable_parser import SourceDataIterableParser
 from modules.interfaces.estimator_interface import EstimateUniqueFieldsResult
@@ -40,15 +43,18 @@ def print_results(results: EstimateUniqueFieldsResult) -> None:
 
 
 async def main() -> None:
-    print("Settings: ", SETTINGS)
+    # print("Settings: ", SETTINGS)
     core: CoreManager = CoreManager()
     core.set_data_source_parser(SourceDataIterableParser())
     core.set_data_base_gateway(TempDataBaseGateway())
     core.set_bytes_parser(CppBytesParserAdapter())
     core.set_estimator(StructsEstimator())
+    core.set_error_handler(ErrorFileWriter(SETTINGS.error_handler))
 
     result = await core.get_estimate_result()
-    print_results(result)
+    stream = io.StringIO()
+    EstimateResultPrinter.print(result, SETTINGS.estimate, stream)
+    print(stream.getvalue())
 
 
 if __name__ == '__main__':
