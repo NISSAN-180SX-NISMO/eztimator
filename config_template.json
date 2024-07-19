@@ -1,7 +1,11 @@
 {
   "estimate": {
-    "target_keys": [{ <str>: <regex> }],
-    "matches_percent": <float>
+    "target_keys": [{ "key": <str>, "value": <regex> }, ...],
+    "matches_percent": <float>,
+    "result_printer": {
+      "path": <str>,
+      "only_filtered_view": <bool>
+    }
   },
   "data_base": {
     "path": <str>,
@@ -10,11 +14,15 @@
     "table": <str>
   },
   "http": {
-    "targets": [<str>]
+    "targets": [<str>, ...]
   },
   "data_source": {
     "path": <str>,
     "line_delimiter": <str>,
     "value_delimiter": <str>
+  },
+  "error_handler": {
+    "path": <str>,
+    "save_timestamp": <bool>
   }
 }

@@ -20,8 +20,8 @@ from modules.interfaces.data_base_gateway_interface import DataBaseGatewayInterf
 class TempDataBaseGateway(DataBaseGatewayInterface):
 
     async def get_info(self, key: str, cfg: Settings.DataBase) -> Response:
-        # Список с 6 случайными строками
-        random_strings = ["aboba", "svo", "goida", 'gurenya', "zov", 'amogus']
+        # Список сo случайными строками
+        random_strings = ["nexus", "orbit", "quantum", "nebula", "cosmos", "stellar"]
 
         # Выбираем случайные 3 строки из списка
         selected_strings = random.sample(random_strings, 3)
@@ -54,6 +54,7 @@ async def main() -> None:
     result = await core.get_estimate_result()
     stream = io.StringIO()
     EstimateResultPrinter.print(result, SETTINGS.estimate, stream)
+    print(f'for target keys: {SETTINGS.estimate.target_keys}')
     print(stream.getvalue())
 
 

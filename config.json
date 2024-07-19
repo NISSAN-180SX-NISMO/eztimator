@@ -1,6 +1,6 @@
 {
   "estimate": {
-    "target_keys": [{"key": "svo", "value": "goida"}],
+    "target_keys": [{"key": "cosmos", "value": "quantum"}],
     "matches_percent": 10,
     "result_printer": {
       "path": "estimate_result.txt",
